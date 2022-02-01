@@ -2,7 +2,11 @@
 
 namespace App\Exceptions;
 
+use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -34,8 +38,29 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->reportable(function (Throwable $e) {
-            //
+
+        $this->renderable(function (NotFoundHttpException $e, Request $request) {
+
+            Log::error('Route not found', [
+                'trace' => $e->getTraceAsString(),
+                'route' => $request->url()
+            ]);
+
+            return response()->json([
+                'message' => 'Route not found.'
+            ], 500);
+        });
+
+        $this->renderable(function (Exception $e) {
+
+            Log::error('Exception generated', [
+                'error_message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 400);
         });
     }
 }
