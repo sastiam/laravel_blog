@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Events\Email\UserRegistered;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Carbon\Carbon;
@@ -20,14 +21,16 @@ class AuthController extends Controller
                 'password' => 'required|string'
             ]);
 
-            User::create([
+            $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => bcrypt($request->password)
             ]);
 
+            event(new UserRegistered($user));
+
             return response()->json([
-                'message' => 'Successfully created user!'
+                'message' => 'Successfully created user!',
             ], 201);
         } catch (Exception $e) {
 
