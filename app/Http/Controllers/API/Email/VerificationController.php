@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\API\Email;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Email\EmailVerificationRequest;
 use Illuminate\Auth\Events\Verified;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 
 class VerificationController extends Controller
